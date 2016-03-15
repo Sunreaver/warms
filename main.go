@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -17,8 +20,11 @@ var (
 )
 
 func main() {
-	stocks, e := readFile("stock.json")
+	file, _ := exec.LookPath(os.Args[0])
+	path, _ := filepath.Abs(file)
+	stocks, e := readFile(filepath.Dir(path) + systemSep() + "stock.json")
 	if e != nil {
+		fmt.Println(e.Error())
 		return
 	}
 
@@ -77,4 +83,15 @@ func readFile(fileName string) ([]string, error) {
 		return nil, e
 	}
 	return stocks, nil
+}
+
+//获取系统分隔符
+func systemSep() (path string) {
+
+	if os.IsPathSeparator('\\') { //前边的判断是否是系统的分隔符
+		path = "\\"
+	} else {
+		path = "/"
+	}
+	return path
 }
