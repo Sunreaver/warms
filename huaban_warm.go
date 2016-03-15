@@ -7,11 +7,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
+
+	tanweirushTools "github.com/tanweirush/goTools"
 )
 
 var (
@@ -168,9 +168,9 @@ func isFileExists(filePath string) bool {
 //创建目录
 func mackDirWithToday(dirName string) error {
 
-	dir := curPath()
+	dir := tanweirushTools.CurPath()
 
-	fullPath := dir + systemSep() + dirName
+	fullPath := dir + tanweirushTools.SystemSep() + dirName
 	if isDirExists(fullPath) { //目录已经存在
 		return nil
 	}
@@ -182,25 +182,6 @@ func mackDirWithToday(dirName string) error {
 	return nil
 }
 
-//获取系统分隔符
-func systemSep() (path string) {
-
-	if os.IsPathSeparator('\\') { //前边的判断是否是系统的分隔符
-		path = "\\"
-	} else {
-		path = "/"
-	}
-	return path
-}
-
-//获取当前运行目录
-func curPath() (path string) {
-	file, _ := exec.LookPath(os.Args[0])
-	pt, _ := filepath.Abs(file)
-
-	return filepath.Dir(pt)
-}
-
 func readContent(hb HuaBan) error {
 
 	if !strings.HasPrefix(hb.File.Type, "image/") {
@@ -209,13 +190,11 @@ func readContent(hb HuaBan) error {
 
 	fileType := hb.File.Type[len("image/"):]
 
-	dir := curPath() //当前的目录
+	dir := tanweirushTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01-02"))
 	mackDirWithToday(dirName)
-	filename := dir + systemSep() + dirName + systemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
+	filename := dir + tanweirushTools.SystemSep() + dirName + tanweirushTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
 	// fmt.Println(filename)
-
-	fmt.Println(filename)
 
 	if isFileExists(filename) {
 		// fmt.Printf("File Already Exists %s.\n", fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID))
