@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	tanweirushTools "github.com/tanweirush/goTools"
+	tanweiTools "github.com/tanweirush/goTools"
 )
 
 var (
@@ -168,9 +168,9 @@ func isFileExists(filePath string) bool {
 //创建目录
 func mackDirWithToday(dirName string) error {
 
-	dir := tanweirushTools.CurPath()
+	dir := tanweiTools.CurPath()
 
-	fullPath := dir + tanweirushTools.SystemSep() + dirName
+	fullPath := dir + tanweiTools.SystemSep() + dirName
 	if isDirExists(fullPath) { //目录已经存在
 		return nil
 	}
@@ -190,10 +190,10 @@ func readContent(hb HuaBan) error {
 
 	fileType := hb.File.Type[len("image/"):]
 
-	dir := tanweirushTools.CurPath() //当前的目录
+	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01-02"))
 	mackDirWithToday(dirName)
-	filename := dir + tanweirushTools.SystemSep() + dirName + tanweirushTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
+	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
 	// fmt.Println(filename)
 
 	if isFileExists(filename) {
