@@ -124,16 +124,7 @@ func Get(url string) (content string, err error) {
 }
 
 func findIndex(content string) (hb []HuaBan, err error) {
-	// sStr := `app.page["pins"] = `
-	// start := strings.Index(content, sStr)
-	// end := strings.Index(content, `app.page["ads"]`)
-	// start += len(sStr)
-	// subStr := content[start : end-2]
-
 	matches := ptnIndexItem.FindAllStringSubmatch(content, -1)
-	// fmt.Println(matches[0][1])
-
-	// fmt.Println(subStr)
 	if len(matches) == 0 {
 		return nil, errors.New("查找json出错")
 	}
@@ -142,36 +133,13 @@ func findIndex(content string) (hb []HuaBan, err error) {
 	return hb, nil
 }
 
-//判断目录是否存在
-func isDirExists(path string) bool {
-	fi, err := os.Stat(path)
-
-	if err != nil {
-		return os.IsExist(err)
-	} else {
-		return fi.IsDir()
-	}
-
-	panic("not reached")
-}
-
-//判断文件是否存在
-func isFileExists(filePath string) bool {
-	fi, err := os.Open(filePath)
-	if err != nil {
-		return false
-	}
-	fi.Close()
-	return true
-}
-
 //创建目录
-func mackDirWithToday(dirName string) error {
+func makeDirWithToday(dirName string) error {
 
 	dir := tanweiTools.CurPath()
 
 	fullPath := dir + tanweiTools.SystemSep() + dirName
-	if isDirExists(fullPath) { //目录已经存在
+	if tanweiTools.IsDirExists(fullPath) { //目录已经存在
 		return nil
 	}
 
@@ -192,12 +160,10 @@ func readContent(hb HuaBan) error {
 
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01-02"))
-	mackDirWithToday(dirName)
+	makeDirWithToday(dirName)
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
-	// fmt.Println(filename)
 
-	if isFileExists(filename) {
-		// fmt.Printf("File Already Exists %s.\n", fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID))
+	if tanweiTools.IsFileExists(filename) {
 		return FileHadExist
 	}
 
@@ -226,13 +192,7 @@ func readContent(hb HuaBan) error {
 			fmt.Printf("Error Write File %d.\n", h.FileID)
 			return
 		}
-		// fmt.Printf("Finish writing to %d, Image = %d.\n", h.FileID, n)
 	}(hb, data)
-	// match := ptnContentRough.FindStringSubmatch(raw)
-
-	// content = ptnBrTag.ReplaceAllString(content, "\r\n")
-	// content = ptnHTMLTag.ReplaceAllString(content, "")
-	// content = ptnSpace.ReplaceAllString(content, "")
 
 	return nil
 }
