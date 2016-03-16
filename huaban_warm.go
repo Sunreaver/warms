@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	tanweiTools "github.com/tanweirush/goTools"
+	tanweiTools "github.com/stormrage/goTools"
 )
 
 var (

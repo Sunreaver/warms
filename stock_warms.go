@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	tanweiTools "github.com/tanweirush/goTools"
-	"github.com/tanweirush/mahonia"
+	tanweiTools "github.com/stormrage/goTools"
+	"github.com/stormrage/mahonia"
 )
 
 var (
