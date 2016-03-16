@@ -239,7 +239,8 @@ func main() {
 				time.Sleep(1 * time.Minute)
 				fmt.Print(".")
 			}
-			fmt.Println(time.Now().Format("06/01/02-15:04"), "\r\n")
+			fmt.Println(time.Now().Format("06/01/02-15:04"))
+            fmt.Printf("\r\n")
 		}()
 		time.Sleep(time.Duration(sleepTime) * time.Minute)
 	}
