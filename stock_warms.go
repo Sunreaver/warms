@@ -9,12 +9,14 @@ import (
 	"strconv"
 	"strings"
 
-	tanweiTools "github.com/stromrage/goTools"
-	"github.com/stromrage/mahonia"
+	"gopkg.in/redis.v3"
+
+	tanweiTools "github.com/sunreaver/goTools"
+	"github.com/sunreaver/mahonia"
 )
 
 var (
-    // StockDataRegexp sina接口返回数据提取
+	// StockDataRegexp sina接口返回数据提取
 	StockDataRegexp = regexp.MustCompile(`="(.*)";`)
 )
 
@@ -23,6 +25,12 @@ func main() {
 	if e != nil {
 		fmt.Println(e.Error())
 		return
+	}
+
+	client := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
+	cmd := client.Set("key", "heheeh", 0)
+	if cmd.Err() {
+
 	}
 
 	format := "%s:\t>>>>>昨收:%s\t今收:%s\t今开:%s\t幅度:%s<<<<<\r\n"
