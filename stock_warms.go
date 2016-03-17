@@ -14,6 +14,7 @@ import (
 )
 
 var (
+    // StockDataRegexp sina接口返回数据提取
 	StockDataRegexp = regexp.MustCompile(`="(.*)";`)
 )
 
