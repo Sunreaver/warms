@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	tanweiTools "github.com/sunreaver/goTools"
+	tanweiTools "github.com/sunreaver/goTools/system"
 )
 
 var (

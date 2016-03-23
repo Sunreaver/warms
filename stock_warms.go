@@ -9,7 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	tanweiTools "github.com/sunreaver/goTools"
+	mail "github.com/sunreaver/goTools/mail"
+	sys "github.com/sunreaver/goTools/system"
 	"github.com/sunreaver/mahonia"
 )
 
@@ -24,7 +25,7 @@ type Config struct {
 }
 
 func main() {
-	configs, e := readFile(tanweiTools.CurPath() + tanweiTools.SystemSep() + "stock.json")
+	configs, e := readFile(sys.CurPath() + sys.SystemSep() + "stock.json")
 	if e != nil {
 		fmt.Println(e.Error())
 		return
@@ -72,7 +73,7 @@ func main() {
 
 		outStr = outStr + "\r\nHappy day!\r\n"
 
-		e = tanweiTools.SendMail(outStr, cfg.Mail)
+		e = mail.SendMail(outStr, cfg.Mail)
 		if e != nil {
 			fmt.Println(e.Error())
 		}
