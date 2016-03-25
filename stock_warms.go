@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	mail "github.com/sunreaver/goTools/mail"
 	sys "github.com/sunreaver/goTools/system"
@@ -78,6 +79,7 @@ func main() {
 			fmt.Println(e.Error())
 		}
 	}
+	fmt.Println(time.Now().Format("2006-01-02 03:04:05"))
 }
 
 func readFile(fileName string) ([]Config, error) {
