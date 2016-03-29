@@ -74,7 +74,7 @@ func main() {
 
 		outStr = outStr + "\r\nHappy day!\r\n"
 
-		e = mail.SendMail(outStr, cfg.Mail)
+		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
 		if e != nil {
 			fmt.Println(e.Error())
 		}
