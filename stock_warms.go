@@ -79,7 +79,7 @@ func main() {
 			fmt.Println(e.Error())
 		}
 	}
-	fmt.Println(time.Now().Format("2006-01-02 03:04:05"))
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func readFile(fileName string) ([]Config, error) {
