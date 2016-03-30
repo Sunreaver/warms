@@ -10,7 +10,10 @@ import (
 	"strings"
 	"time"
 
-	mail "github.com/sunreaver/goTools/mail"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+
+	"github.com/sunreaver/goTools/mail"
 	sys "github.com/sunreaver/goTools/system"
 	"github.com/sunreaver/mahonia"
 )
@@ -18,11 +21,56 @@ import (
 var (
 	// StockDataRegexp sina接口返回数据提取
 	StockDataRegexp = regexp.MustCompile(`="(.*)";`)
+
+	// mongodb
+	mongo *mgo.Session
+)
+
+const (
+	Name             = 0
+	TodayOpening     = 1
+	YesterdayClosing = 2
+	NowValue         = 3
+	Date             = 30
+	Time             = 31
 )
 
 type Config struct {
 	Mail   []string `json:"emails"`
 	Stocks []string `json:"stocks"`
+}
+
+type Stock struct {
+	Name             string  `bson:"name"`
+	Code             string  `bson:",omitempty"`
+	Margin           float64 `bson:"margin"`
+	Now              string  `bson:"now"`
+	Opening          string  `bson:"opening"`
+	YesterdayClosing string  `bson:"yopening"`
+	Time             string  `bson:"timeFormat"`
+	TimeUnix         int64   `bson:"time"`
+}
+
+func (s *Stock) SaveDB() error {
+	sess := mongo.Copy()
+	defer sess.Close()
+
+	_, e := sess.DB("").C(s.Code).Upsert(bson.M{"timeFormat": s.Time}, s)
+	return e
+}
+
+func init() {
+	var err error
+	mongo, err = mgo.DialWithInfo(&mgo.DialInfo{
+		Addrs:    []string{"127.0.0.1", "localhost"},
+		Direct:   true,
+		Timeout:  0,
+		Database: "Stocks",
+	})
+	if err != nil {
+		panic("mongo Dial Error")
+	}
+	mongo.SetMode(mgo.Monotonic, true)
 }
 
 func main() {
@@ -59,17 +107,34 @@ func main() {
 			}
 
 			numerical := strings.Split(matchs[0][1], ",")
-			if len(numerical) < 5 {
+			if len(numerical) < 32 {
 				continue
 			}
 
 			upDown := "未知"
-			yestoday, e1 := strconv.ParseFloat(numerical[2], 64)
-			today, e2 := strconv.ParseFloat(numerical[3], 64)
+			yestoday, e1 := strconv.ParseFloat(numerical[YesterdayClosing], 64)
+			today, e2 := strconv.ParseFloat(numerical[NowValue], 64)
 			if e1 == nil && e2 == nil {
 				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)[0:6]
 			}
-			outStr = outStr + fmt.Sprintf(format, numerical[0], numerical[2], numerical[3], numerical[1], upDown)
+			outStr = outStr + fmt.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
+
+			t := numerical[Date] + " " + numerical[Time]
+			ti, e3 := time.Parse("2006-01-02 15:04:05", t)
+			if e3 != nil {
+				ti = time.Now()
+			}
+			s := Stock{
+				Code:             v[2:],
+				Margin:           float64(today - yestoday),
+				Name:             numerical[Name],
+				Now:              numerical[NowValue],
+				Opening:          numerical[TodayOpening],
+				YesterdayClosing: numerical[YesterdayClosing],
+				Time:             t,
+				TimeUnix:         ti.Unix(),
+			}
+			s.SaveDB()
 		}
 
 		outStr = outStr + "\r\nHappy day!\r\n"
