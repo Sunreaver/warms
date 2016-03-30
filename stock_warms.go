@@ -66,6 +66,8 @@ func init() {
 		Direct:   true,
 		Timeout:  0,
 		Database: "Stocks",
+		Username: "stocks",
+		Password: "1111",
 	})
 	if err != nil {
 		panic("mongo Dial Error")
