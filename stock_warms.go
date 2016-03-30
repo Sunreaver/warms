@@ -42,7 +42,7 @@ type Config struct {
 
 type Stock struct {
 	Name             string  `bson:"name"`
-	Code             string  `bson:",omitempty"`
+	Code             string  `bson:"c,omitempty"`
 	Margin           float64 `bson:"margin"`
 	Now              string  `bson:"now"`
 	Opening          string  `bson:"opening"`
@@ -125,7 +125,7 @@ func main() {
 				ti = time.Now()
 			}
 			s := Stock{
-				Code:             v[2:],
+				Code:             v,
 				Margin:           float64(today - yestoday),
 				Name:             numerical[Name],
 				Now:              numerical[NowValue],
