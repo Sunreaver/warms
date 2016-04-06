@@ -1,6 +1,9 @@
 *
 !*.*
+.Ds
 *test*
 *.zip
 *.log
 auth.json
+*.htm
+!*/

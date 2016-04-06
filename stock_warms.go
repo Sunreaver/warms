@@ -26,6 +26,7 @@ var (
 	mongo *mgo.Session
 )
 
+// sina stock接口返回的数据位置
 const (
 	Name             = 0
 	TodayOpening     = 1
@@ -35,11 +36,13 @@ const (
 	Time             = 31
 )
 
+// Config 用户配置
 type Config struct {
 	Mail   []string `json:"emails"`
 	Stocks []string `json:"stocks"`
 }
 
+// Stock sina stock返回数据后整理
 type Stock struct {
 	Name             string  `bson:"name"`
 	Code             string  `bson:"c,omitempty"`
@@ -51,6 +54,7 @@ type Stock struct {
 	TimeUnix         int64   `bson:"time"`
 }
 
+// SaveDB save
 func (s *Stock) SaveDB() error {
 	sess := mongo.Copy()
 	defer sess.Close()
