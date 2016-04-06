@@ -30,10 +30,11 @@ func main() {
 			continue
 		}
 		s := mahonia.NewDecoder("gb2312").ConvertString(string(r))
-		fmt.Println(s)
 		s = strings.Replace(s, "www.ziyexing.com", "23.83.239.152", -1)
+		s = strings.Replace(s, "charset=gb2312", "charset=utf-8", -1)
 		s = strings.Replace(s, "子夜星网站", "sunreaver", -1)
 		s = strings.Replace(s, "Midnight Star", "sunreaver", -1)
+		s = strings.Replace(s, "../../images/", "../images/", -1)
 
 		dir := sys.CurPath()
 		fileName := dir + sys.SystemSep() + fmt.Sprintf("xiyouji_%03d.htm", i)
@@ -50,7 +51,7 @@ func main() {
 			}
 		}
 
-		s = mahonia.NewEncoder("gb2312").ConvertString(s)
+		s = mahonia.NewEncoder("utf-8").ConvertString(s)
 		n, e2 := f.WriteString(s)
 		if e2 != nil {
 			log.Println("Error with Write : ", fileName)
