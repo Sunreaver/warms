@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
 	sys "github.com/sunreaver/goTools/system"
@@ -58,6 +59,51 @@ func main() {
 		} else {
 			log.Println("Write file : ", fileName)
 			log.Println("Write size : ", n)
+		}
+		f.Close()
+
+		//下载资源图
+		getPic(s)
+	}
+}
+
+func getPic(s string) {
+	rg := regexp.MustCompile(`(?U)src="(.*).gif"`)
+	matchs := rg.FindAllStringSubmatch(s, -1)
+
+	for _, item := range matchs {
+		if strings.Contains(item[1], "./") {
+			continue
+		}
+
+		dir := sys.CurPath()
+		fileName := dir + sys.SystemSep() + item[1] + ".gif"
+
+		if sys.IsFileExists(fileName) {
+			continue
+		}
+		f, e := os.Create(fileName)
+		if e != nil {
+			log.Println("Error Create: ", fileName)
+			continue
+		}
+
+		resp, e1 := http.Get(fmt.Sprintf("http://www.ziyexing.com/book/xiyouji/%s.gif", item[1]))
+		if e1 != nil {
+			log.Println("Error Download: ", item[1], ".gif")
+			continue
+		}
+		defer resp.Body.Close()
+		r, e2 := ioutil.ReadAll(resp.Body)
+		if e2 != nil {
+			log.Println("Error Read: ", item[1], ".gif")
+			continue
+		}
+		n, e3 := f.Write(r)
+		if e3 != nil {
+			log.Println("Error Write: ", item[1], ".gif")
+		} else {
+			log.Println("Download: ", item[1], ".gif size: ", n)
 		}
 		f.Close()
 	}
