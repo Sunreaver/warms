@@ -14,10 +14,10 @@ import (
 )
 
 func main() {
-	for i := 0; i <= 100; i++ {
-		url := "http://www.ziyexing.com/book/xiyouji/xiyouji_index.htm"
+	for i := 0; i <= 120; i++ {
+		url := "http://www.ziyexing.com/book/sanguo/sanguo_index.htm"
 		if i != 0 {
-			url = fmt.Sprintf("http://www.ziyexing.com/book/xiyouji/xiyouji_%03d.htm", i)
+			url = fmt.Sprintf("http://www.ziyexing.com/book/sanguo/sanguo_%03d.htm", i)
 		}
 
 		resp, err := http.Get(url)
@@ -38,9 +38,9 @@ func main() {
 		s = strings.Replace(s, "../../images/", "../images/", -1)
 
 		dir := sys.CurPath()
-		fileName := dir + sys.SystemSep() + fmt.Sprintf("xiyouji_%03d.htm", i)
+		fileName := dir + sys.SystemSep() + fmt.Sprintf("sanguo_%03d.htm", i)
 		if i == 0 {
-			fileName = dir + sys.SystemSep() + "xiyouji_index.htm"
+			fileName = dir + sys.SystemSep() + "sanguo_index.htm"
 		}
 
 		f, e1 := os.Create(fileName)
@@ -88,7 +88,7 @@ func getPic(s string) {
 			continue
 		}
 
-		resp, e1 := http.Get(fmt.Sprintf("http://www.ziyexing.com/book/xiyouji/%s.gif", item[1]))
+		resp, e1 := http.Get(fmt.Sprintf("http://www.ziyexing.com/book/sanguo/%s.gif", item[1]))
 		if e1 != nil {
 			log.Println("Error Download: ", item[1], ".gif")
 			continue
