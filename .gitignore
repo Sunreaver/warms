@@ -8,3 +8,4 @@ auth.json
 *.htm
 !*/
 *.DS_*
+!huaban

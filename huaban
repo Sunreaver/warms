@@ -1,0 +1,27 @@
+#启动服务
+#!bin/bash
+
+start(){
+	echo "启动中"
+	nohup ~/Doc/bin/huaban/huaban_warm >> ~/Doc/log/huaban.log &!
+	echo "启动完毕"
+}
+
+stop(){
+	echo "关闭中"
+	kill -9 $(ps -ef | grep huaban_warm)
+	echo "已经关闭"
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+esac
