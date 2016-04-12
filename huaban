@@ -1,5 +1,11 @@
-#启动服务
 #!bin/bash
+#
+# Startup huaban_warm
+#
+# chkconfig: - 85 15
+# description: huaban_warm server
+# processname: huaban_warm
+
 
 RETVAL=0
 prog="huaban_warm"
@@ -11,13 +17,13 @@ log=/root/Doc/log/huaban.log
 
 start() {
 	echo "启动中"
-	nohup $exec >> $log &!
+	nohup $exec > $log 2>&1 &
 	echo "启动完毕"
 }
 
 stop() {
 	echo "关闭中"
-	kill -9 $(ps -ef | grep huaban_warm)
+	killproc $prog
 	echo "已经关闭"
 }
 
