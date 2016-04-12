@@ -9,8 +9,8 @@
 
 RETVAL=0
 prog="huaban_warm"
-exec=/root/Doc/bin/huaban/huaban_warm
-log=/root/Doc/log/huaban.log
+exec=/root/Doc/bin/huaban/$prog
+log=/root/Doc/log/$prog.log
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -39,4 +39,6 @@ case "$1" in
 		start
 		;;
 esac
+echo "Usage: $0 {start|stop|restart}"
+        exit 1
 exit $?
