@@ -1,13 +1,21 @@
 #启动服务
 #!bin/bash
 
-start(){
+RETVAL=0
+prog="huaban_warm"
+exec=/root/Doc/bin/huaban/huaban_warm
+log=/root/Doc/log/huaban.log
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+start() {
 	echo "启动中"
-	nohup ~/Doc/bin/huaban/huaban_warm >> ~/Doc/log/huaban.log &!
+	nohup $exec >> $log &!
 	echo "启动完毕"
 }
 
-stop(){
+stop() {
 	echo "关闭中"
 	kill -9 $(ps -ef | grep huaban_warm)
 	echo "已经关闭"
@@ -25,3 +33,4 @@ case "$1" in
 		start
 		;;
 esac
+exit $?
