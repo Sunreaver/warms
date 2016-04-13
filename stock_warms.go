@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -125,7 +126,7 @@ func main() {
 			if e1 == nil && e2 == nil {
 				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)[0:6]
 			}
-			outStr = outStr + log.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
+			outStr = outStr + fmt.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
 
 			t := numerical[Date] + " " + numerical[Time]
 			ti, e3 := time.Parse("2006-01-02 15:04:05", t)
