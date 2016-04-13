@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -38,8 +39,8 @@ const (
 
 // Config 用户配置
 type Config struct {
-	Mail   []string `json:"emails"`
-	Stocks []string `json:"stocks"`
+	Mail   []string         `json:"emails"`
+	Stocks sort.StringSlice `json:"stocks"`
 }
 
 // Stock sina stock返回数据后整理
@@ -82,7 +83,7 @@ func init() {
 func main() {
 	configs, e := readFile(sys.CurPath() + sys.SystemSep() + "stock.json")
 	if e != nil {
-		fmt.Println(e.Error())
+		log.Println(e.Error())
 		return
 	}
 
@@ -94,6 +95,7 @@ func main() {
 			continue
 		}
 		outStr := ""
+		sort.Sort(cfg.Stocks)
 		for _, v := range cfg.Stocks {
 			resp, err := http.Get("http://hq.sinajs.cn/list=" + v)
 			if err != nil {
@@ -123,7 +125,7 @@ func main() {
 			if e1 == nil && e2 == nil {
 				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)[0:6]
 			}
-			outStr = outStr + fmt.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
+			outStr = outStr + log.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
 
 			t := numerical[Date] + " " + numerical[Time]
 			ti, e3 := time.Parse("2006-01-02 15:04:05", t)
@@ -147,10 +149,10 @@ func main() {
 
 		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
 		if e != nil {
-			fmt.Println(e.Error())
+			log.Println(e.Error())
 		}
 	}
-	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+	log.Println(time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func readFile(fileName string) ([]Config, error) {
