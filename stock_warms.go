@@ -14,8 +14,8 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/sunreaver/goTools/mail"
-	sys "github.com/sunreaver/goTools/system"
+	"github.com/sunreaver/gotools/mail"
+	sys "github.com/sunreaver/gotools/system"
 	"github.com/sunreaver/mahonia"
 )
 
