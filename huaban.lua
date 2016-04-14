@@ -4,7 +4,7 @@ local dir = "/root/Doc/bin/huaban"
 
 function makecommand( )
 	local one = "cd " .. dir
-	local two = "git pull"
+	local two = [[git add .;git commit -m "init";git push]]
 	return one .. ";" .. two
 end
 
