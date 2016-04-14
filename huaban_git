@@ -9,18 +9,15 @@
 
 RETVAL=0
 dir=/root/Doc/bin/huaban
+prog=$dir/huaban_gitpush
+log=/root/Doc/log/$prog.log
 
 # Source function library.
 . /etc/rc.d/init.d/functions
 
 start() {
-	echo "git add"
-	cd $dir
-	git add .
-	echo "commit"
-	git commit "init" | exit 0
-	echo "push"
-	git push | exit 0
+	echo "git push"
+	nohup $exec > $log 2>&1 &
 	echo "push over"
 }
 
