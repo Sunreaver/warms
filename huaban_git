@@ -9,7 +9,8 @@
 
 RETVAL=0
 dir=/root/Doc/bin/huaban
-prog=$dir/huaban_gitpush
+prog=huaban_gitpush
+exec=$dir/$prog
 log=/root/Doc/log/$prog.log
 
 # Source function library.
