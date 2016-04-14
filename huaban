@@ -38,7 +38,8 @@ case "$1" in
 		stop
 		start
 		;;
+		*)
+	echo $"Usage: $0 {start|stop|restart}"
+    exit 2
 esac
-echo "Usage: $0 {start|stop|restart}"
-        exit 1
 exit $?

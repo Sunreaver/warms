@@ -28,8 +28,8 @@ case "$1" in
 	start)
 		start
 		;;
-		)
-		echo "Usage: $0 {start}"
-        ;;
+		*)
+	echo $"Usage: $0 {start}"
+	exit 2
 esac
 exit $?
