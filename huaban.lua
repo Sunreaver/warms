@@ -8,10 +8,10 @@ function makecommand( )
 	return one .. ";" .. two
 end
 
-function gitpull( )
+function gitpush( )
 	local cmd = makecommand()
 	print(cmd)
 	os.execute(cmd)
 end
 
-gitpull()
+gitpush()
