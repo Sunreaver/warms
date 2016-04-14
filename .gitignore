@@ -1,11 +1,12 @@
 *
 !*.*
-.Ds
+.Ds*
 *test*
 *.zip
 *.log
 auth.json
-*.htm
+*.htm*
 !*/
 *.DS_*
 !huaban
+!huaban_git
