@@ -159,7 +159,7 @@ func readContent(hb HuaBan) error {
 	fileType := hb.File.Type[len("image/"):]
 
 	dir := tanweiTools.CurPath() //当前的目录
-	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01-02"))
+	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
 
