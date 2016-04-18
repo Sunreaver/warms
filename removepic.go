@@ -13,9 +13,13 @@ import (
 )
 
 func main() {
-
-	imgPath := system.CurPath()
-	removeFileWithDir(imgPath)
+	if len(os.Args) < 2 {
+		removeFileWithDir(system.CurPath())
+	} else {
+		for i := 1; i < len(os.Args); i++ {
+			removeFileWithDir(os.Args[i])
+		}
+	}
 }
 
 func removeFileWithDir(dir string) {
@@ -30,6 +34,9 @@ func removeFileWithDir(dir string) {
 		file.Close()
 		if item.IsDir() {
 			log.Println("Dir : ", item.Name())
+			if item.Name() == ".git" {
+				continue
+			}
 			removeFileWithDir(dir + system.SystemSep() + item.Name())
 			continue
 		}
