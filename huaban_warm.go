@@ -200,6 +200,9 @@ func readContent(hb HuaBan) error {
 		} else if cf.Height < 980 || cf.Width < 700 || len(d) < 50*1024 {
 			fmt.Printf("Too Small %d.\n", h.FileID)
 			return
+		} else if len(d) > 3*1024*1024 {
+			fmt.Printf("Too Large %d.\n", h.FileID)
+			return
 		}
 		file, e1 := os.Create(filename)
 		if e1 != nil {
