@@ -161,6 +161,9 @@ func readContent(hb HuaBan) error {
 	}
 
 	fileType := hb.File.Type[len("image/"):]
+	if fileType != "png" || fileType != "jpeg" {
+		return errors.New("不是png或者jpeg")
+	}
 
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
