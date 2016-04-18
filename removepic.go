@@ -59,7 +59,7 @@ func removeFileWithDir(dir string) {
 				cf, e2 = jpeg.DecodeConfig(file)
 			}
 
-			if e2 != nil || (cf.Height < 700 || cf.Width < 600) {
+			if e2 != nil || (cf.Height < 980 || cf.Width < 700) {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		} else if strings.HasSuffix(item.Name(), ".gif") {
