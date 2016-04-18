@@ -186,6 +186,7 @@ func readContent(hb HuaBan) error {
 		r := bytes.NewReader(d)
 		var cf image.Config
 		var e0 error
+
 		if h.File.Type[len("image/"):] == "png" {
 			cf, e0 = png.DecodeConfig(r)
 		} else {
