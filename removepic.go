@@ -40,7 +40,7 @@ func removeFileWithDir(dir string) {
 			var e1 error
 			file, e1 = os.Open(dir + system.SystemSep() + item.Name())
 			if e1 != nil {
-				log.Println(e1)
+				removeFile(dir + system.SystemSep() + item.Name())
 				continue
 			}
 			var cf image.Config
@@ -51,16 +51,20 @@ func removeFileWithDir(dir string) {
 				cf, e2 = jpeg.DecodeConfig(file)
 			}
 			if e2 != nil {
-				log.Println(e2)
+				removeFile(dir + system.SystemSep() + item.Name())
 				continue
 			}
-			if cf.Height < 600 || cf.Width < 500 {
-				if e := os.Remove(dir + system.SystemSep() + item.Name()); e != nil {
-					log.Println("remove error : ", e)
-				} else {
-					log.Println("removed : ", item.Name())
-				}
+			if cf.Height < 700 || cf.Width < 600 {
+				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		}
+	}
+}
+
+func removeFile(file string) {
+	if e := os.Remove(file); e != nil {
+		log.Println("remove error : ", e)
+	} else {
+		log.Println("removed : ", file)
 	}
 }
