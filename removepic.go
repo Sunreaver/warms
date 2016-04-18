@@ -30,6 +30,7 @@ func removeFileWithDir(dir string) {
 	}
 
 	var file *os.File
+	defer file.Close()
 	for _, item := range files {
 		file.Close()
 		if item.IsDir() {
@@ -57,11 +58,8 @@ func removeFileWithDir(dir string) {
 			} else {
 				cf, e2 = jpeg.DecodeConfig(file)
 			}
-			if e2 != nil {
-				removeFile(dir + system.SystemSep() + item.Name())
-				continue
-			}
-			if cf.Height < 700 || cf.Width < 600 {
+
+			if e2 != nil || (cf.Height < 700 || cf.Width < 600) {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		} else if strings.HasSuffix(item.Name(), ".gif") {
