@@ -193,7 +193,6 @@ func readContent(hb HuaBan) error {
 		}
 		if e0 != nil {
 			fmt.Printf("Error []byte2io.reader %d.\n", h.FileID)
-			fmt.Println(e0)
 			return
 		} else if cf.Height < 600 || cf.Width < 500 {
 			fmt.Printf("Too Small %d.\n", h.FileID)
