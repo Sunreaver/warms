@@ -14,4 +14,9 @@ function gitpush( )
 	os.execute(cmd)
 end
 
+-- function getfilescount()
+-- 	local exc = {}
+-- 	exc[0] = "cd " .. dir
+-- 	exc[1] = [[ls -l | grep "^-" | wc -l]]
+-- end
 gitpush()
