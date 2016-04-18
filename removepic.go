@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -12,11 +13,25 @@ import (
 	"github.com/sunreaver/gotools/system"
 )
 
+var (
+	maxw int
+	minw int
+	maxh int
+	minh int
+)
+
 func main() {
-	if len(os.Args) < 2 {
+	flag.IntVar(&maxw, "aw", 800, "最大的宽度")
+	flag.IntVar(&minw, "iw", 400, "最小的宽度")
+	flag.IntVar(&maxh, "ah", 3000, "最大的高度")
+	flag.IntVar(&minh, "ih", 600, "最小的高度")
+
+	flag.Parse()
+	log.Println(flag.Args())
+	if len(flag.Args()) == 0 {
 		removeFileWithDir(system.CurPath())
 	} else {
-		for i := 1; i < len(os.Args); i++ {
+		for i := 0; i < len(flag.Args()); i++ {
 			removeFileWithDir(os.Args[i])
 		}
 	}
@@ -59,7 +74,9 @@ func removeFileWithDir(dir string) {
 				cf, e2 = jpeg.DecodeConfig(file)
 			}
 
-			if e2 != nil || (cf.Height < 980 || cf.Width < 700) {
+			if e2 != nil ||
+				cf.Height < minh || cf.Width < minw ||
+				cf.Height > maxh || cf.Width > maxw {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		} else if strings.HasSuffix(item.Name(), ".gif") {
