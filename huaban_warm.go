@@ -197,7 +197,7 @@ func readContent(hb HuaBan) error {
 		if e0 != nil {
 			fmt.Printf("Error []byte2io.reader %d.\n", h.FileID)
 			return
-		} else if cf.Height < 700 || cf.Width < 600 {
+		} else if cf.Height < 980 || cf.Width < 700 || len(d) < 50*1024 {
 			fmt.Printf("Too Small %d.\n", h.FileID)
 			return
 		}
@@ -252,7 +252,7 @@ func main() {
 		}
 
 		//总休眠时间
-		var sleepTime int = int(100.0 / n)
+		sleepTime := int(100.0 / n)
 		//显示倒计时
 		go func() {
 			fmt.Print(sleepTime, ".")
