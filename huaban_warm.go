@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"image"
+	"image/jpeg"
+	"image/png"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -159,7 +163,7 @@ func readContent(hb HuaBan) error {
 	fileType := hb.File.Type[len("image/"):]
 
 	dir := tanweiTools.CurPath() //当前的目录
-	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01-02"))
+	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
 
@@ -179,7 +183,21 @@ func readContent(hb HuaBan) error {
 	}
 
 	go func(h HuaBan, d []byte) {
-
+		r := bytes.NewReader(d)
+		var cf image.Config
+		var e0 error
+		if h.File.Type[len("image/"):] == "png" {
+			cf, e0 = png.DecodeConfig(r)
+		} else {
+			cf, e0 = jpeg.DecodeConfig(r)
+		}
+		if e0 != nil {
+			fmt.Printf("Error []byte2io.reader %d.\n", h.FileID)
+			return
+		} else if cf.Height < 600 || cf.Width < 500 {
+			fmt.Printf("Too Small %d.\n", h.FileID)
+			return
+		}
 		file, e1 := os.Create(filename)
 		if e1 != nil {
 			fmt.Printf("Error Create File %d.\n", h.FileID)
