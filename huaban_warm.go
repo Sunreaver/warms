@@ -26,9 +26,13 @@ var (
 	ptnSpace        = regexp.MustCompile(`(^\s+)|( )`)
 
 	warmUrl = `http://huaban.com/favorite/beauty/`
+	// warmUrl = `http://huaban.com/boards/18916504`
 	imgPath = `http://img.hb.aicdn.com/`
 
 	FileHadExist = errors.New("文件已经存在")
+
+	wMinMax = [2]int{450, 900}
+	hMinMax = [2]int{800, 3000}
 )
 
 type HuaBan struct {
@@ -197,11 +201,12 @@ func readContent(hb HuaBan) error {
 		if e0 != nil {
 			fmt.Printf("Error []byte2io.reader %d.\n", h.FileID)
 			return
-		} else if cf.Height < 980 || cf.Width < 700 || len(d) < 50*1024 {
-			fmt.Printf("Too Small %d.\n", h.FileID)
+		} else if (cf.Height > hMinMax[1] || cf.Height < hMinMax[0]) ||
+			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) {
+			fmt.Printf("Height||Width No Match %d.\n", h.FileID)
 			return
-		} else if len(d) > 3*1024*1024 {
-			fmt.Printf("Too Large %d.\n", h.FileID)
+		} else if len(d) > 3*1024*1024 || len(d) < 50*1024 {
+			fmt.Printf("size no match %d.\n", h.FileID)
 			return
 		}
 		file, e1 := os.Create(filename)
