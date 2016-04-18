@@ -64,6 +64,8 @@ func removeFileWithDir(dir string) {
 			if cf.Height < 700 || cf.Width < 600 {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
+		} else if strings.HasSuffix(item.Name(), ".gif") {
+			removeFile(dir + system.SystemSep() + item.Name())
 		}
 	}
 }
