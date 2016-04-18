@@ -26,7 +26,7 @@ func removeFileWithDir(dir string) {
 	files, e := ioutil.ReadDir(dir)
 	if e != nil {
 		log.Println(e)
-		panic(e)
+		return
 	}
 
 	var file *os.File
