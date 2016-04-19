@@ -26,13 +26,13 @@ var (
 	ptnSpace        = regexp.MustCompile(`(^\s+)|( )`)
 
 	warmUrl = `http://huaban.com/favorite/beauty/`
-	// warmUrl = `http://huaban.com/boards/18916504`
+	// warmUrl = `http://huaban.com/boards/28266958`
 	imgPath = `http://img.hb.aicdn.com/`
 
 	FileHadExist = errors.New("文件已经存在")
 
-	wMinMax = [2]int{450, 900}
-	hMinMax = [2]int{800, 3000}
+	wMinMax = [2]int{450, 1000}
+	hMinMax = [2]int{600, 2000}
 )
 
 type HuaBan struct {
