@@ -18,6 +18,8 @@ var (
 	minw int
 	maxh int
 	minh int
+	maxs int
+	mins int
 )
 
 func main() {
@@ -25,6 +27,8 @@ func main() {
 	flag.IntVar(&minw, "iw", 400, "最小的宽度")
 	flag.IntVar(&maxh, "ah", 3000, "最大的高度")
 	flag.IntVar(&minh, "ih", 600, "最小的高度")
+	flag.IntVar(&maxs, "as", 5, "最大的size（单位MB）")
+	flag.IntVar(&mins, "is", 50, "最小的size（单位KB）")
 
 	flag.Parse()
 	log.Println(flag.Args())
@@ -74,9 +78,12 @@ func removeFileWithDir(dir string) {
 				cf, e2 = jpeg.DecodeConfig(file)
 			}
 
+			fileInfo, e3 := os.Stat(dir + system.SystemSep() + item.Name())
 			if e2 != nil ||
 				cf.Height < minh || cf.Width < minw ||
 				cf.Height > maxh || cf.Width > maxw {
+				removeFile(dir + system.SystemSep() + item.Name())
+			} else if e3 != nil || fileInfo.Size()/1024/1024 > maxs || fileInfo.Size()/1024 < mins {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		} else if strings.HasSuffix(item.Name(), ".gif") {

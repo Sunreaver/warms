@@ -167,12 +167,16 @@ func readContent(hb HuaBan) error {
 	fileType := hb.File.Type[len("image/"):]
 	if fileType != "png" && fileType != "jpeg" {
 		return errors.New("不是png或者jpeg")
+	} else if hb.File.Width < wMinMax[0] || hb.File.Width > wMinMax[1] ||
+		hb.File.Height < hMinMax[0] || hb.File.Height > hMinMax[1] {
+		return errors.New("尺寸不匹配")
 	}
 
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
-	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.User.Username, hb.FileID) + "." + fileType
+	ttitle := strings.Replace(hb.Board.Title, " ", "-", -1)
+	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", ttitle, hb.FileID) + "." + fileType
 
 	if tanweiTools.IsFileExists(filename) {
 		return FileHadExist
@@ -191,6 +195,8 @@ func readContent(hb HuaBan) error {
 
 	go func(h HuaBan, d []byte) {
 		r := bytes.NewReader(d)
+
+		//cf 用来检测图像真实尺寸
 		var cf image.Config
 		var e0 error
 		if h.File.Type[len("image/"):] == "png" {
