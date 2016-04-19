@@ -165,7 +165,7 @@ func readContent(hb HuaBan) error {
 	}
 
 	fileType := hb.File.Type[len("image/"):]
-	if fileType != "png" || fileType != "jpeg" {
+	if fileType != "png" && fileType != "jpeg" {
 		return errors.New("不是png或者jpeg")
 	}
 
