@@ -175,7 +175,8 @@ func readContent(hb HuaBan) error {
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
-	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", hb.Board.Title, hb.FileID) + "." + fileType
+	ttitle := strings.Replace(hb.Board.Title, " ", "-", -1)
+	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", ttitle, hb.FileID) + "." + fileType
 
 	if tanweiTools.IsFileExists(filename) {
 		return FileHadExist
