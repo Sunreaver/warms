@@ -23,7 +23,7 @@ var (
 )
 
 func main() {
-	flag.IntVar(&maxw, "aw", 800, "最大的宽度")
+	flag.IntVar(&maxw, "aw", 900, "最大的宽度")
 	flag.IntVar(&minw, "iw", 400, "最小的宽度")
 	flag.IntVar(&maxh, "ah", 3000, "最大的高度")
 	flag.IntVar(&minh, "ih", 600, "最小的高度")
@@ -83,7 +83,7 @@ func removeFileWithDir(dir string) {
 				cf.Height < minh || cf.Width < minw ||
 				cf.Height > maxh || cf.Width > maxw {
 				removeFile(dir + system.SystemSep() + item.Name())
-			} else if e3 != nil || fileInfo.Size()/1024/1024 > maxs || fileInfo.Size()/1024 < mins {
+			} else if e3 != nil || fileInfo.Size()/1024/1024 > int64(maxs) || fileInfo.Size()/1024 < int64(mins) {
 				removeFile(dir + system.SystemSep() + item.Name())
 			}
 		} else if strings.HasSuffix(item.Name(), ".gif") {
