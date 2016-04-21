@@ -10,8 +10,13 @@ end
 
 function gitpush( )
 	local cmd = makecommand()
-	print(cmd)
-	os.execute(cmd)
+	print(os.date("%Y-%m-%d %H:%M:%S"), " Push")
+	local r = os.execute(cmd)
+	if r == true then
+	    print(os.date("%Y-%m-%d %H:%M:%S"), " : Push OK")
+	else
+	    print(os.date("%Y-%m-%d %H:%M:%S"), " : Push Faile")
+	end
 end
 
 gitpush()
