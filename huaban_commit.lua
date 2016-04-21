@@ -4,7 +4,7 @@ local dir = "/root/Doc/bin/huaban"
 
 function makecommand( )
 	local one = "cd " .. dir
-	local two = [[git add .;git commit -m "init";git push]]
+	local two = string.format('git add .;git commit -m \"%s, add\";git push', os.date("%Y-%m-%d %H:%M:%S"))
 	return one .. ";" .. two
 end
 
