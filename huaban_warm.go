@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -169,10 +168,11 @@ func readContent(hb HuaBan) error {
 	fileType := hb.File.Type[len("image/"):]
 	if fileType != "png" && fileType != "jpeg" {
 		return errors.New("不是png或者jpeg")
-	} else if hb.File.Width < wMinMax[0] || hb.File.Width > wMinMax[1] ||
-		hb.File.Height < hMinMax[0] || hb.File.Height > hMinMax[1] {
-		return errors.New("尺寸不匹配: " + strconv.Itoa(hb.File.Width) + "x" + strconv.Itoa(hb.File.Height))
 	}
+	// else if hb.File.Width < wMinMax[0] || hb.File.Width > wMinMax[1] ||
+	// 	hb.File.Height < hMinMax[0] || hb.File.Height > hMinMax[1] {
+	// 	return errors.New("尺寸不匹配: " + strconv.Itoa(hb.File.Width) + "x" + strconv.Itoa(hb.File.Height))
+	// }
 
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
@@ -211,18 +211,18 @@ func readContent(hb HuaBan) error {
 			return
 		} else if (cf.Height > hMinMax[1] || cf.Height < hMinMax[0]) ||
 			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) {
-			log.Printf("Height||Width No Match %d.\n", h.FileID)
+			log.Printf("Width||Height No Match %d. %dx%d\n", h.FileID, cf.Width, cf.Height)
 			return
 		} else if len(d) > 2*1024*1024 || len(d) < 50*1024 {
 			log.Printf("size no match %d.\n", h.FileID)
 			return
 		}
 		file, e1 := os.Create(filename)
+		defer file.Close()
 		if e1 != nil {
 			log.Printf("Error Create File %d.\n", h.FileID)
 			return
 		}
-		defer file.Close()
 
 		_, e2 := file.Write(d)
 		if e2 != nil {
