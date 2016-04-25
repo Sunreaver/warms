@@ -260,7 +260,7 @@ func main() {
 			}
 		}
 
-		log.Printf("\r\n总\t保存\t已存在\t出错\r\n%d\t%d\t%d\t%d\r\n", n, n-exist-errCount, exist, errCount)
+		log.Printf("\r\n总\t保存\t已存在\t异常\r\n%d\t%d\t%d\t%d\r\n", n, n-exist-errCount, exist, errCount)
 
 		if n-exist-errCount <= 0 {
 			n = 3
