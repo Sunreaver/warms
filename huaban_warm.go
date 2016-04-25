@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -205,26 +206,26 @@ func readContent(hb HuaBan) error {
 			cf, e0 = jpeg.DecodeConfig(r)
 		}
 		if e0 != nil {
-			fmt.Printf("Error []byte2io.reader %d.\n", h.FileID)
+			log.Printf("Error []byte2io.reader %d.\n", h.FileID)
 			return
 		} else if (cf.Height > hMinMax[1] || cf.Height < hMinMax[0]) ||
 			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) {
-			fmt.Printf("Height||Width No Match %d.\n", h.FileID)
+			log.Printf("Height||Width No Match %d.\n", h.FileID)
 			return
 		} else if len(d) > 2*1024*1024 || len(d) < 50*1024 {
-			fmt.Printf("size no match %d.\n", h.FileID)
+			log.Printf("size no match %d.\n", h.FileID)
 			return
 		}
 		file, e1 := os.Create(filename)
 		if e1 != nil {
-			fmt.Printf("Error Create File %d.\n", h.FileID)
+			log.Printf("Error Create File %d.\n", h.FileID)
 			return
 		}
 		defer file.Close()
 
 		_, e2 := file.Write(d)
 		if e2 != nil {
-			fmt.Printf("Error Write File %d.\n", h.FileID)
+			log.Printf("Error Write File %d.\n", h.FileID)
 			return
 		}
 	}(hb, data)
@@ -237,7 +238,7 @@ func main() {
 	for {
 		con, err := Get(warmUrl)
 		if err != nil {
-			fmt.Println("\r\n链接出错,3分钟后再试: " + time.Now().Format("06/01/02-15:04"))
+			log.Println("\r\n链接出错,3分钟后再试: " + time.Now().Format("06/01/02-15:04"))
 			time.Sleep(3 * time.Minute)
 			continue
 		}
@@ -247,17 +248,18 @@ func main() {
 		var exist, errCount = 0, 0
 		n = 0
 		for _, item := range index {
-			// fmt.Printf("Get content %s from %s and write to file.\n", item.title, item.url)
+			// log.Printf("Get content %s from %s and write to file.\n", item.title, item.url)
 			n++
 			e := readContent(item)
 			if e == FileHadExist {
 				exist++
 			} else if e != nil {
 				errCount++
+				log.Println(e)
 			}
 		}
 
-		fmt.Printf("\r\n总\t保存\t已存在\t出错\r\n%d\t%d\t%d\t%d\r\n", n, n-exist-errCount, exist, errCount)
+		log.Printf("\r\n总\t保存\t已存在\t出错\r\n%d\t%d\t%d\t%d\r\n", n, n-exist-errCount, exist, errCount)
 
 		if n-exist-errCount <= 0 {
 			n = 3
@@ -272,13 +274,13 @@ func main() {
 		}
 		//显示倒计时
 		go func() {
-			fmt.Print(sleepTime, ".")
+			log.Print(sleepTime, ".")
 			for i := 1; i < sleepTime; i++ {
 				time.Sleep(1 * time.Minute)
-				fmt.Print(".")
+				log.Print(".")
 			}
-			fmt.Println(time.Now().Format("06/01/02-15:04"))
-			fmt.Printf("\r\n")
+			log.Println(time.Now().Format("06/01/02-15:04"))
+			log.Printf("\r\n")
 		}()
 		time.Sleep(time.Duration(sleepTime) * time.Minute)
 	}
