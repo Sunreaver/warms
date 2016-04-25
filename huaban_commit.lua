@@ -4,14 +4,19 @@ local dir = "/root/Doc/bin/huaban"
 
 function makecommand( )
 	local one = "cd " .. dir
-	local two = [[git add .;git commit -m "init";git push]]
+	local two = string.format('git add .;git commit -m \"%s, add\";git push', os.date("%Y-%m-%d %H:%M:%S"))
 	return one .. ";" .. two
 end
 
 function gitpush( )
 	local cmd = makecommand()
-	print(cmd)
-	os.execute(cmd)
+	print(os.date("%Y-%m-%d %H:%M:%S"), " Push")
+	local r = os.execute(cmd)
+	if r == true then
+	    print(os.date("%Y-%m-%d %H:%M:%S"), " : Push OK")
+	else
+	    print(os.date("%Y-%m-%d %H:%M:%S"), " : Push Faile")
+	end
 end
 
 gitpush()

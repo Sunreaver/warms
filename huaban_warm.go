@@ -266,7 +266,10 @@ func main() {
 		}
 
 		//总休眠时间
-		sleepTime := int(100.0 / n)
+		sleepTime := 30 - n
+		if sleepTime <= 0 {
+			sleepTime = 1
+		}
 		//显示倒计时
 		go func() {
 			fmt.Print(sleepTime, ".")
