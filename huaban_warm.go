@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -170,7 +171,7 @@ func readContent(hb HuaBan) error {
 		return errors.New("不是png或者jpeg")
 	} else if hb.File.Width < wMinMax[0] || hb.File.Width > wMinMax[1] ||
 		hb.File.Height < hMinMax[0] || hb.File.Height > hMinMax[1] {
-		return errors.New("尺寸不匹配")
+		return errors.New("尺寸不匹配: " + strconv.Itoa(hb.File.Width) + "x" + strconv.Itoa(hb.File.Height))
 	}
 
 	dir := tanweiTools.CurPath() //当前的目录
