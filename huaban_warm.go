@@ -32,8 +32,8 @@ var (
 
 	FileHadExist = errors.New("文件已经存在")
 
-	wMinMax = [2]int{450, 1000}
-	hMinMax = [2]int{600, 2000}
+	wMinMax = [2]int{450, 900}
+	hMinMax = [2]int{600, 1400}
 )
 
 type HuaBan struct {
