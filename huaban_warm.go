@@ -32,7 +32,7 @@ var (
 
 	FileHadExist = errors.New("文件已经存在")
 
-	wMinMax = [2]int{450, 900}
+	wMinMax = [2]int{500, 800}
 	hMinMax = [2]int{600, 1400}
 )
 
@@ -213,7 +213,7 @@ func readContent(hb HuaBan) error {
 			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) {
 			log.Printf("Width||Height No Match %d. %dx%d\n", h.FileID, cf.Width, cf.Height)
 			return
-		} else if len(d) > 2*1024*1024 || len(d) < 50*1024 {
+		} else if len(d) > 500*1024 || len(d) < 50*1024 {
 			log.Printf("size no match %d.\n", h.FileID)
 			return
 		}
