@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -34,6 +35,8 @@ var (
 
 	wMinMax = [2]int{500, 800}
 	hMinMax = [2]int{600, 1400}
+
+	fileMD5 = map[string]int{}
 )
 
 // HuaBan warmURL对应的huaban内容结构
@@ -117,6 +120,11 @@ type HuaBan struct {
 	ViaUserID int `json:"via_user_id"`
 }
 
+func init() {
+	getMD5(tanweiTools.CurPath(), fileMD5)
+	log.Println("MD5 File Count : ", len(fileMD5))
+}
+
 // Get 获取url对应的文件内容
 // 返回到content中
 func Get(url string) (content string, err error) {
@@ -197,6 +205,12 @@ func readContent(hb HuaBan) error {
 	if e != nil {
 		return e
 	}
+
+	k := fmt.Sprintf("%x", md5.Sum(data))
+	if _, ok := fileMD5[k]; ok {
+		return errFileHadExist
+	}
+	fileMD5[k]++
 
 	go func(h HuaBan, d []byte) {
 		r := bytes.NewReader(d)
@@ -281,11 +295,47 @@ func main() {
 			log.Print(sleepTime, ".")
 			for i := 1; i < sleepTime; i++ {
 				time.Sleep(1 * time.Minute)
-				log.Print(".")
+				fmt.Print(".")
 			}
-			log.Println(time.Now().Format("06/01/02-15:04"))
-			log.Printf("\r\n")
+			fmt.Println(time.Now().Format("06/01/02-15:04"))
+			fmt.Printf("\r\n")
 		}()
 		time.Sleep(time.Duration(sleepTime) * time.Minute)
+	}
+}
+
+func getMD5(dir string, outMD5OfFile map[string]int) {
+	files, e := ioutil.ReadDir(dir)
+	if e != nil {
+		log.Println(e)
+		return
+	}
+
+	var f *os.File
+	for _, item := range files {
+		if item.IsDir() {
+			log.Println("Dir : ", item.Name())
+			if item.Name() == ".git" {
+				continue
+			}
+			getMD5(dir+tanweiTools.SystemSep()+item.Name(), outMD5OfFile)
+			continue
+		}
+		var e1 error
+		f, e1 = os.Open(dir + tanweiTools.SystemSep() + item.Name())
+		if e1 != nil {
+			f.Close()
+			continue
+		}
+
+		var b []byte
+		b, e1 = ioutil.ReadAll(f)
+		if e1 != nil {
+			f.Close()
+			continue
+		}
+		key := fmt.Sprintf("%x", md5.Sum(b))
+		outMD5OfFile[key]++
+		f.Close()
 	}
 }
