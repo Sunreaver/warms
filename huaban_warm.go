@@ -26,16 +26,17 @@ var (
 	ptnHTMLTag      = regexp.MustCompile(`(?s)</?.*?>`)
 	ptnSpace        = regexp.MustCompile(`(^\s+)|( )`)
 
-	warmUrl = `http://huaban.com/favorite/beauty/`
-	// warmUrl = `http://huaban.com/boards/28266958`
+	warmURL = `http://huaban.com/favorite/beauty/`
+	// warmURL = `http://huaban.com/boards/28266958`
 	imgPath = `http://img.hb.aicdn.com/`
 
-	FileHadExist = errors.New("文件已经存在")
+	errFileHadExist = errors.New("文件已经存在")
 
 	wMinMax = [2]int{500, 800}
 	hMinMax = [2]int{600, 1400}
 )
 
+// HuaBan warmURL对应的huaban内容结构
 type HuaBan struct {
 	Board struct {
 		BoardID     int    `json:"board_id"`
@@ -116,6 +117,8 @@ type HuaBan struct {
 	ViaUserID int `json:"via_user_id"`
 }
 
+// Get 获取url对应的文件内容
+// 返回到content中
 func Get(url string) (content string, err error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -181,7 +184,7 @@ func readContent(hb HuaBan) error {
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", ttitle, hb.FileID) + "." + fileType
 
 	if tanweiTools.IsFileExists(filename) {
-		return FileHadExist
+		return errFileHadExist
 	}
 
 	res, err := http.Get(imgPath + hb.File.Key)
@@ -237,7 +240,7 @@ func readContent(hb HuaBan) error {
 func main() {
 	var n = 1
 	for {
-		con, err := Get(warmUrl)
+		con, err := Get(warmURL)
 		if err != nil {
 			log.Println("\r\n链接出错,3分钟后再试: " + time.Now().Format("06/01/02-15:04"))
 			time.Sleep(3 * time.Minute)
@@ -252,7 +255,7 @@ func main() {
 			// log.Printf("Get content %s from %s and write to file.\n", item.title, item.url)
 			n++
 			e := readContent(item)
-			if e == FileHadExist {
+			if e == errFileHadExist {
 				exist++
 			} else if e != nil {
 				errCount++
