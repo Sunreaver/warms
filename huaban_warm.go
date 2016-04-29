@@ -189,6 +189,15 @@ func readContent(hb HuaBan) error {
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
 	ttitle := strings.Replace(hb.Board.Title, " ", "-", -1)
+	ttitle := strings.Replace(ttitle, ":", "-", -1)
+	ttitle := strings.Replace(ttitle, "\\", "-", -1)
+	ttitle := strings.Replace(ttitle, "/", "-", -1)
+	ttitle := strings.Replace(ttitle, "*", "-", -1)
+	ttitle := strings.Replace(ttitle, "?", "-", -1)
+	ttitle := strings.Replace(ttitle, "\"", "-", -1)
+	ttitle := strings.Replace(ttitle, "<", "-", -1)
+	ttitle := strings.Replace(ttitle, ">", "-", -1)
+	ttitle := strings.Replace(ttitle, "|", "-", -1)
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", ttitle, hb.FileID) + "." + fileType
 
 	if tanweiTools.IsFileExists(filename) {
@@ -297,7 +306,6 @@ func main() {
 				time.Sleep(1 * time.Minute)
 				fmt.Print(".")
 			}
-			fmt.Println(time.Now().Format("06/01/02-15:04"))
 			fmt.Printf("\r\n")
 		}()
 		time.Sleep(time.Duration(sleepTime) * time.Minute)
