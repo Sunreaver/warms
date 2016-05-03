@@ -188,16 +188,10 @@ func readContent(hb HuaBan) error {
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
-	ttitle := strings.Replace(hb.Board.Title, " ", "-", -1)
-	ttitle := strings.Replace(ttitle, ":", "-", -1)
-	ttitle := strings.Replace(ttitle, "\\", "-", -1)
-	ttitle := strings.Replace(ttitle, "/", "-", -1)
-	ttitle := strings.Replace(ttitle, "*", "-", -1)
-	ttitle := strings.Replace(ttitle, "?", "-", -1)
-	ttitle := strings.Replace(ttitle, "\"", "-", -1)
-	ttitle := strings.Replace(ttitle, "<", "-", -1)
-	ttitle := strings.Replace(ttitle, ">", "-", -1)
-	ttitle := strings.Replace(ttitle, "|", "-", -1)
+	ttitle := hb.Board.Title
+	for _, s := range " :\\/*?\"<>|" {
+		ttitle = strings.Replace(ttitle, string(s), "-", -1)
+	}
 	filename := dir + tanweiTools.SystemSep() + dirName + tanweiTools.SystemSep() + fmt.Sprintf("%s_%d", ttitle, hb.FileID) + "." + fileType
 
 	if tanweiTools.IsFileExists(filename) {
@@ -236,7 +230,8 @@ func readContent(hb HuaBan) error {
 			log.Printf("Error []byte2io.reader %d.\n", h.FileID)
 			return
 		} else if (cf.Height > hMinMax[1] || cf.Height < hMinMax[0]) ||
-			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) {
+			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) ||
+			cf.Height/cf.Width > 3 {
 			log.Printf("Width||Height No Match %d. %dx%d\n", h.FileID, cf.Width, cf.Height)
 			return
 		} else if len(d) > 500*1024 || len(d) < 50*1024 {
