@@ -231,7 +231,7 @@ func readContent(hb HuaBan) error {
 			return
 		} else if (cf.Height > hMinMax[1] || cf.Height < hMinMax[0]) ||
 			(cf.Width < wMinMax[0] || cf.Width > wMinMax[1]) ||
-			cf.Height/cf.Width > 3 {
+			float64(cf.Height)/float64(cf.Width) > 3.0 {
 			log.Printf("Width||Height No Match %d. %dx%d\n", h.FileID, cf.Width, cf.Height)
 			return
 		} else if len(d) > 500*1024 || len(d) < 50*1024 {
