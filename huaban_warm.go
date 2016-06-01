@@ -37,6 +37,8 @@ var (
 	hMinMax = [2]int{600, 1400}
 
 	fileMD5 = map[string]int{}
+
+	excludeFileNames = []string{"欧美"}
 )
 
 // HuaBan warmURL对应的huaban内容结构
@@ -188,6 +190,13 @@ func readContent(hb HuaBan) error {
 	dir := tanweiTools.CurPath() //当前的目录
 	dirName := fmt.Sprintf("huaban_%s", time.Now().Format("2006-01"))
 	makeDirWithToday(dirName)
+
+	for _, item := range excludeFileNames {
+		if strings.Contains(hb.Board.Title, item) {
+			return errors.New("不需要")
+		}
+	}
+
 	ttitle := hb.Board.Title
 	for _, s := range " :\\/*?\"<>|" {
 		ttitle = strings.Replace(ttitle, string(s), "-", -1)
