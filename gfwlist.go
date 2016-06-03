@@ -36,6 +36,8 @@ func main() {
 		log.Println("MoveFile Err:", e)
 		return
 	}
+
+	log.Println("Update OK")
 }
 
 func getGfwlist(url string) (gfwlist []string) {
