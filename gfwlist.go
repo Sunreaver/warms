@@ -67,6 +67,8 @@ func getGfwlist(url string) (gfwlist []string) {
 			len(item) == 0 {
 			continue
 		}
+		item = strings.Replace(item, "\\", "\\\\", -1)
+		item = strings.Replace(item, "/", "\\/", -1)
 		result = append(result, item)
 	}
 	gfwlist = result
