@@ -15,6 +15,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/sunreaver/gotools/mail"
 	sys "github.com/sunreaver/gotools/system"
 	"github.com/sunreaver/mahonia"
 )
@@ -65,6 +66,12 @@ func (s *Stock) SaveDB() error {
 	return e
 }
 
+func (s Stock) String() string {
+	format := "%s:\t>>>>>跌涨:%2.2f%%\t当前:%s\t昨收:%s\t幅度:%0.3f\t今开:%s<<<<<"
+	yestoday, _ := strconv.ParseFloat(s.YesterdayClosing, 64)
+	return fmt.Sprintf(format, s.Name, s.Margin/yestoday*100, s.Now, s.YesterdayClosing, s.Margin, s.Opening)
+}
+
 func init() {
 	var err error
 	mongo, err = mgo.DialWithInfo(&mgo.DialInfo{
@@ -88,26 +95,22 @@ func main() {
 		return
 	}
 
-	format := "%s:\t>>>>>跌涨:%0.2f\t昨收:%s\t今收:%s\t今开:%s\t幅度:%s<<<<<\r\n"
-
 	for _, cfg := range configs {
 
 		if len(cfg.Mail) == 0 {
 			continue
 		}
-		outStr := ""
 		sort.Sort(cfg.Stocks)
-		log.Println(cfg.Stocks)
 		list := strings.Join(cfg.Stocks, ",")
-		log.Println(list)
 		resp, err := http.Get("http://hq.sinajs.cn/list=" + list)
 		if err != nil {
-			log.Println(err)
+			log.Println("Get Err:", err)
 			continue
 		}
 		body, e := ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 		if e != nil {
+			log.Println("ioutil Err:", err)
 			continue
 		}
 
@@ -117,12 +120,14 @@ func main() {
 		if len(matchs) == 0 {
 			continue
 		}
+		stocks := []Stock{}
 		for index, v := range matchs {
 			if len(v) < 2 {
 				continue
 			}
 			numerical := strings.Split(v[1], ",")
 			if len(numerical) < 32 {
+				log.Println("Format32 Err:", err)
 				continue
 			}
 
@@ -130,10 +135,11 @@ func main() {
 			yestoday, e1 := strconv.ParseFloat(numerical[YesterdayClosing], 64)
 			today, e2 := strconv.ParseFloat(numerical[NowValue], 64)
 			if e1 == nil && e2 == nil {
-				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)[0:6]
+				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)
+				if len(upDown) > 6 {
+					upDown = upDown[:6]
+				}
 			}
-
-			outStr = outStr + fmt.Sprintf(format, numerical[Name], float64(today-yestoday)/yestoday, numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
 
 			t := numerical[Date] + " " + numerical[Time]
 			ti, e3 := time.Parse("2006-01-02 15:04:05", t)
@@ -151,15 +157,21 @@ func main() {
 				TimeUnix:         ti.Unix(),
 			}
 			s.SaveDB()
+			stocks = append(stocks, s)
 		}
 
-		outStr = outStr + "\r\nHappy day!\r\n"
-		log.Println(outStr)
+		outStr := ""
 
-		// e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
-		// if e != nil {
-		// 	log.Println(e.Error())
-		// }
+		for _, s := range stocks {
+			outStr += fmt.Sprintln(s)
+		}
+		outStr += "\r\nHappy day!\r\n"
+		fmt.Println(outStr)
+
+		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
+		if e != nil {
+			log.Println(e.Error())
+		}
 	}
 	log.Println(time.Now().Format("2006-01-02 15:04:05"))
 }
