@@ -168,7 +168,7 @@ func main() {
 		outStr += "\r\nHappy day!\r\n"
 		fmt.Println(outStr)
 
-		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
+		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, "每日一报", "行情播报："+time.Now().Format("2006-01-02 15:04\r\n"), cfg.Mail)
 		if e != nil {
 			log.Println(e.Error())
 		}
