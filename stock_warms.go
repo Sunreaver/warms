@@ -67,7 +67,7 @@ func (s *Stock) SaveDB() error {
 }
 
 func (s Stock) String() string {
-	format := "%s:\t>>>>>跌涨:%2.2f%%\t当前:%s\t昨收:%s\t幅度:%0.3f\t今开:%s<<<<<"
+	format := "%s:%2.2f%%\t>>>>>当前:%s\t昨收:%s\t幅度:%0.3f\t今开:%s<<<<<"
 	yestoday, _ := strconv.ParseFloat(s.YesterdayClosing, 64)
 	return fmt.Sprintf(format, s.Name, s.Margin/yestoday*100, s.Now, s.YesterdayClosing, s.Margin, s.Opening)
 }
