@@ -15,7 +15,6 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/sunreaver/gotools/mail"
 	sys "github.com/sunreaver/gotools/system"
 	"github.com/sunreaver/mahonia"
 )
@@ -52,6 +51,7 @@ type Stock struct {
 	Now              string  `bson:"now"`
 	Opening          string  `bson:"opening"`
 	YesterdayClosing string  `bson:"yopening"`
+	Downup           int     `bson:"downup,omitempty"`
 	Time             string  `bson:"timeFormat"`
 	TimeUnix         int64   `bson:"time"`
 }
@@ -88,7 +88,7 @@ func main() {
 		return
 	}
 
-	format := "%s:\t>>>>>昨收:%s\t今收:%s\t今开:%s\t幅度:%s<<<<<\r\n"
+	format := "%s:\t>>>>>跌涨:%0.2f\t昨收:%s\t今收:%s\t今开:%s\t幅度:%s<<<<<\r\n"
 
 	for _, cfg := range configs {
 
@@ -97,25 +97,31 @@ func main() {
 		}
 		outStr := ""
 		sort.Sort(cfg.Stocks)
-		for _, v := range cfg.Stocks {
-			resp, err := http.Get("http://hq.sinajs.cn/list=" + v)
-			if err != nil {
-				continue
-			}
-			defer resp.Body.Close()
-			body, e := ioutil.ReadAll(resp.Body)
-			if e != nil {
-				continue
-			}
+		log.Println(cfg.Stocks)
+		list := strings.Join(cfg.Stocks, ",")
+		log.Println(list)
+		resp, err := http.Get("http://hq.sinajs.cn/list=" + list)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		body, e := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if e != nil {
+			continue
+		}
 
-			str := string(body)
-			enc := mahonia.NewDecoder("gbk")
-			matchs := StockDataRegexp.FindAllStringSubmatch(enc.ConvertString(str), -1)
-			if len(matchs) == 0 || len(matchs[0]) < 2 {
+		str := string(body)
+		enc := mahonia.NewDecoder("gbk")
+		matchs := StockDataRegexp.FindAllStringSubmatch(enc.ConvertString(str), -1)
+		if len(matchs) == 0 {
+			continue
+		}
+		for index, v := range matchs {
+			if len(v) < 2 {
 				continue
 			}
-
-			numerical := strings.Split(matchs[0][1], ",")
+			numerical := strings.Split(v[1], ",")
 			if len(numerical) < 32 {
 				continue
 			}
@@ -126,7 +132,8 @@ func main() {
 			if e1 == nil && e2 == nil {
 				upDown = strconv.FormatFloat(today-yestoday, 'f', -1, 64)[0:6]
 			}
-			outStr = outStr + fmt.Sprintf(format, numerical[Name], numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
+
+			outStr = outStr + fmt.Sprintf(format, numerical[Name], float64(today-yestoday)/yestoday, numerical[YesterdayClosing], numerical[NowValue], numerical[TodayOpening], upDown)
 
 			t := numerical[Date] + " " + numerical[Time]
 			ti, e3 := time.Parse("2006-01-02 15:04:05", t)
@@ -134,7 +141,7 @@ func main() {
 				ti = time.Now()
 			}
 			s := Stock{
-				Code:             v,
+				Code:             cfg.Stocks[index],
 				Margin:           float64(today - yestoday),
 				Name:             numerical[Name],
 				Now:              numerical[NowValue],
@@ -147,11 +154,12 @@ func main() {
 		}
 
 		outStr = outStr + "\r\nHappy day!\r\n"
+		log.Println(outStr)
 
-		e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
-		if e != nil {
-			log.Println(e.Error())
-		}
+		// e = mail.SendMail(sys.CurPath()+sys.SystemSep()+"auth.json", outStr, cfg.Mail)
+		// if e != nil {
+		// 	log.Println(e.Error())
+		// }
 	}
 	log.Println(time.Now().Format("2006-01-02 15:04:05"))
 }
