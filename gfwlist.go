@@ -21,12 +21,6 @@ var (
 	reg = regexp.MustCompile(`<td id="LC[0-9]+" class="blob-code blob-code-inner js-file-line">(.*)</td>`)
 )
 
-var fns = template.FuncMap{
-	"plus1": func(x int) int {
-		return x + 1
-	},
-}
-
 func main() {
 	result := getGfwlist("https://github.com/gfwlist/gfwlist/blob/master/gfwlist.txt")
 	if len(result) == 0 {
@@ -38,11 +32,11 @@ func main() {
 		return
 	}
 
-	// e := moveFile2ShadowsocksX(fileName)
-	// if e != nil {
-	// 	log.Println("MoveFile Err:", e)
-	// 	return
-	// }
+	e := moveFile2ShadowsocksX(fileName)
+	if e != nil {
+		log.Println("MoveFile Err:", e)
+		return
+	}
 
 	log.Println("Update OK")
 }
@@ -98,7 +92,11 @@ func makeJsFile(gfwlist []string) (fileName string) {
 	if e != nil {
 		return
 	}
-	tmpl := template.Must(template.New("1").Funcs(fns).Parse(string(b)))
+	tmpl := template.Must(template.New("1").Funcs(template.FuncMap{
+		"plus1": func(x int) int {
+			return x + 1
+		},
+	}).Parse(string(b)))
 
 	tmpl.Execute(f, gfwlist)
 	f.Close()
